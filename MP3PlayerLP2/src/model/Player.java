@@ -39,15 +39,4 @@ public class Player {
 		return diretorios;
 	}
 	
-	public void tocarMusica() {
-		
-	}
-	
-	public void logarUsuario() {
-		
-	}
-	
-	public void cadastrarUsuario() {
-		
-	}
 }
