@@ -1,7 +1,10 @@
 package controller;
 
 import javafx.fxml.FXML;
-
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import java.io.BufferedReader;
@@ -13,17 +16,25 @@ import java.util.List;
 import javafx.event.ActionEvent;
 
 import javafx.scene.control.Label;
-
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextField;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import model.Musica;
 import model.Player;
 import model.Playlist;
 import model.User;
 
 public class PlayerSceneController {
+	
+	private Stage stage;
+	private Scene scene;
+	private Parent root;
+	
+	//player
 	@FXML
 	private Button playButton;
 	@FXML
@@ -42,6 +53,16 @@ public class PlayerSceneController {
 	private Button selectDirectoryButton;
 	@FXML
 	private Button selectFileButton;
+	@FXML
+	private Label Username;
+	
+	//login
+	@FXML
+	private Button exitButton;
+	@FXML
+	private TextField loginUserName;
+	@FXML
+	private PasswordField loginSenha;
 
 	// Event Listener on Button[#playButton].onAction
 	@FXML
@@ -79,6 +100,34 @@ public class PlayerSceneController {
 		DirectoryChooser directory_chooser = new DirectoryChooser();
 		directory_chooser.setTitle("Selecione o diretorio a ser adicionado");
 		directory_chooser.showDialog(null);
+	}
+	@FXML
+	public void fecharAplicação(ActionEvent event) {
+		System.exit(0);
+	}
+	
+	@FXML
+	public void logar(ActionEvent event) {
+		switchScene(event, "PlayerScene.fxml");
+		
+		User usuario = new User();
+		usuario.setLogin(loginUserName.getText());
+		usuario.setSenha(loginSenha.getText());
+		definirUsuarioLogado(usuario);
+		Username.setText(usuario.getLogin()); //Por algum motivo o setText não funciona, é como se Username fosse null.
+	}
+	
+	public void switchScene(ActionEvent event, String SceneFile){
+		try{
+			root = FXMLLoader.load(getClass().getResource(SceneFile));
+			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+			scene = new Scene(root);
+			stage.setScene(scene);
+			stage.show();
+		}
+		catch (IOException e) {
+			
+		}
 	}
 	
 private Player player;
