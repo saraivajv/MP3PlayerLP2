@@ -2,16 +2,22 @@ package controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
 
@@ -28,7 +34,7 @@ import model.Player;
 import model.Playlist;
 import model.User;
 
-public class PlayerSceneController {
+public class PlayerSceneController{
 	
 	private Stage stage;
 	private Scene scene;
@@ -63,6 +69,10 @@ public class PlayerSceneController {
 	private TextField loginUserName;
 	@FXML
 	private PasswordField loginSenha;
+	@FXML
+	private TextField cadastroUserName;
+	@FXML
+	private PasswordField cadastroSenha;
 
 	// Event Listener on Button[#playButton].onAction
 	@FXML
@@ -117,6 +127,16 @@ public class PlayerSceneController {
 		Username.setText(usuario.getLogin()); //Por algum motivo o setText não funciona, é como se Username fosse null.
 	}
 	
+	@FXML
+	public void cadastrar(ActionEvent event) throws FileNotFoundException {
+		String nomeusuario = cadastroUserName.getText();
+		String senhausuario = cadastroSenha.getText();
+		PrintWriter ps = new PrintWriter("src/template/usuarios.txt");
+        
+        ps.print(nomeusuario + ":" + senhausuario);
+        ps.close();
+	}
+	
 	public void switchScene(ActionEvent event, String SceneFile){
 		try{
 			root = FXMLLoader.load(getClass().getResource(SceneFile));
@@ -167,22 +187,5 @@ private Player player;
 	public User obterUsuarioLogado() {
         return player.getUsuariologado();
     }
-	
-//	public void logarUsuario() {
-//		
-//	}
-//	
-//	public void cadastrarUsuario() throws IOException{
-//		FileReader fr = new FileReader("template/usuarios");
-//		BufferedReader br = new BufferedReader(fr);
-//		String login;
-//		while((login = br.readLine()) != null){
-//			String senha = br.readLine();
-//			User u = new User();
-//			u.setLogin(login);
-//			u.setSenha(senha);
-//			player.addUsuario(u);
-//		}
-//	}
 	
 }

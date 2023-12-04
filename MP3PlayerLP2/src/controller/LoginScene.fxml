@@ -13,9 +13,9 @@
       <TextField fx:id="loginUserName" layoutX="256.0" layoutY="105.0" />
       <PasswordField fx:id="loginSenha" layoutX="256.0" layoutY="136.0" />
       <Button layoutX="192.0" layoutY="168.0" mnemonicParsing="false" onAction="#logar" prefHeight="25.0" prefWidth="212.0" text="entrar" />
-      <TextField layoutX="255.0" layoutY="241.0" />
-      <PasswordField layoutX="255.0" layoutY="272.0" />
-      <Button layoutX="191.0" layoutY="304.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="212.0" text="entrar" />
+      <TextField fx:id="cadastroUserName" layoutX="255.0" layoutY="241.0" />
+      <PasswordField fx:id="cadastroSenha" layoutX="255.0" layoutY="272.0" />
+      <Button layoutX="191.0" layoutY="304.0" mnemonicParsing="false" onAction="#cadastrar" prefHeight="25.0" prefWidth="212.0" text="cadastrar" />
       <Button fx:id="exitButton" layoutX="191.0" layoutY="346.0" mnemonicParsing="false" onAction="#fecharAplicação" prefHeight="25.0" prefWidth="212.0" text="sair da aplicação" />
       <Label layoutX="192.0" layoutY="105.0" text="nome: ">
          <font>
