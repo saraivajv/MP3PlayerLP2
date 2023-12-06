@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
@@ -64,6 +65,12 @@ public class PlayerSceneController implements Initializable{
 	private Button selectFileButton;
 	@FXML
 	private Button exitButton;
+	@FXML
+	private ListView<?> listMusicas;
+	@FXML
+	private ListView<?> listPlaylistAtual;
+	@FXML
+	private ListView<?> listPlaylists;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
