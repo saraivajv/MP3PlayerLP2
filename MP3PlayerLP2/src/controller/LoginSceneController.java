@@ -1,6 +1,8 @@
 package controller;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -45,18 +47,21 @@ public class LoginSceneController implements Initializable{
 	public void logar(ActionEvent event) {
 		try{
 			User usuario = obterUsuariologado();
-			
-			FXMLLoader loader = new FXMLLoader(getClass().getResource("PlayerScene.fxml"));
-			root = loader.load();
-			
-			PlayerSceneController playerSceneController = loader.getController();
-			playerSceneController.definirUsuarioLogado(usuario);
-			playerSceneController.DefinirPerfil();
-			
-			stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-			scene = new Scene(root);
-			stage.setScene(scene);
-			stage.show();
+			if (AutenticarUsuario(usuario)) {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("PlayerScene.fxml"));
+				root = loader.load();
+				
+				PlayerSceneController playerSceneController = loader.getController();
+				playerSceneController.definirUsuarioLogado(usuario);
+				playerSceneController.DefinirPerfil();
+				
+				stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+				scene = new Scene(root);
+				stage.setScene(scene);
+				stage.show();
+			} else {
+				System.out.println("Usuario não cadastrado ou senha errada");
+			}
 		} catch (IOException e) {
 			System.out.println("Deu errado");
 		}
@@ -74,6 +79,31 @@ public class LoginSceneController implements Initializable{
 	        ps.close();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public Boolean AutenticarUsuario(User usuario) {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("src/template/usuarios.txt"));
+			String line = reader.readLine();
+			
+			while (line != null) {
+				String data[] = line.split(":", 2);
+				
+				if (usuario.getLogin().equals(data[0]) && usuario.getSenha().equals(data[1])) {
+					reader.close();
+					return true;
+				}
+				
+				line = reader.readLine();
+			}
+			
+			reader.close();
+			return false;
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 	
