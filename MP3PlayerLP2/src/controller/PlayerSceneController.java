@@ -34,7 +34,7 @@ import model.Player;
 import model.Playlist;
 import model.User;
 
-public class PlayerSceneController {
+public class PlayerSceneController implements Initializable{
 	
 	private Stage stage;
 	private Scene scene;
@@ -65,14 +65,18 @@ public class PlayerSceneController {
 	@FXML
 	private Button exitButton;
 	
-	public void inicializar(User usuario) {
-		definirUsuarioLogado(usuario);
-		Username.setText(usuario.getLogin());
+	@Override
+	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+	}
+	
+	public void DefinirPerfil()
+	{
+		Username.setText(obterUsuarioLogado().getLogin());
 	}
 	
 	@FXML
 	public void tocarMusica(ActionEvent event) {
-		Username.setText(obterUsuarioLogado().getLogin());
 	}
 	
 	@FXML
@@ -117,15 +121,13 @@ public class PlayerSceneController {
 			scene = new Scene(root);
 			stage.setScene(scene);
 			stage.show();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			
 		}
 	}
 	
 	public PlayerSceneController() {
 		this.player = new Player();
-		Username.setText(null);
 	}
 	
 	
@@ -160,5 +162,6 @@ public class PlayerSceneController {
 	public User obterUsuarioLogado() {
         return player.getUsuariologado();
     }
+
 	
 }
