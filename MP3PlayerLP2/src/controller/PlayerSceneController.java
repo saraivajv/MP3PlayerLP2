@@ -77,15 +77,12 @@ public class PlayerSceneController implements Initializable{
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader("src/template/diretorios.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader("src/template/musicas.txt"));
 			String line = reader.readLine();
 			
 			while (line != null) {
-				File dir = new File(line);
-				
-				//Falta completar -----------------------
-				
-				
+				File file = new File(line);
+				listMusicas.getItems().add(file.getName());
 				line = reader.readLine();
 			}
 			
@@ -160,13 +157,17 @@ public class PlayerSceneController implements Initializable{
 			
 		File listamusicas[] = diretorioadicionado.listFiles();
 		for (File m : listamusicas) {
-			listMusicas.getItems().add(m.getName());
-			try {
-				ps = new PrintWriter(new FileWriter("src/template/musicas.txt", true));
-				ps.println(m.getAbsolutePath());
-				ps.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			String fileExtension = m.getName().split("\\.", 2)[1];
+			
+			if (fileExtension.equals("mp3") || fileExtension.equals("wav") || fileExtension.equals("ogg")) {
+				listMusicas.getItems().add(m.getName());
+				try {
+					ps = new PrintWriter(new FileWriter("src/template/musicas.txt", true));
+					ps.println(m.getAbsolutePath());
+					ps.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		
