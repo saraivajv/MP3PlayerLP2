@@ -20,6 +20,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javafx.event.ActionEvent;
 
@@ -28,6 +30,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
@@ -74,6 +78,12 @@ public class PlayerSceneController implements Initializable{
 	@FXML
 	private ListView<String> listPlaylists;
 	
+	private Media media;
+	private MediaPlayer mediaPlayer;
+	private Timer timer;
+	private TimerTask task;
+	private boolean running;
+	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		try {
@@ -91,6 +101,7 @@ public class PlayerSceneController implements Initializable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 	}
 	
 	public void DefinirPerfil()
@@ -100,21 +111,136 @@ public class PlayerSceneController implements Initializable{
 	
 	@FXML
 	public void tocarMusica(ActionEvent event) {
+		beginTimer();
+		ArrayList<File> musicas = new ArrayList<File>();
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("src/template/musicas.txt"));
+			String line = reader.readLine();
+			
+			while (line != null) {
+				musicas.add(new File(line));
+				line = reader.readLine();
+			}
+			
+			reader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		if(listMusicas.getSelectionModel().isEmpty() != true) {
+			String musicaselecao = listMusicas.getSelectionModel().getSelectedItem();
+			for(File m : musicas) {
+				boolean iguais = musicaselecao.equals(m.getName());
+				if(iguais == true) {
+					media = new Media(m.toURI().toString());
+					mediaPlayer = new MediaPlayer(media);
+					mediaPlayer.play();
+					break;
+				}
+			}
+		}
 	}
 	
 	@FXML
 	public void pausarMusica(ActionEvent event) {
-		
+		endTimer();
+		mediaPlayer.pause();
 	}
 	
 	@FXML
 	public void prevMusica(ActionEvent event) {
+		if(running) {
+			endTimer();
+		}
+		ArrayList<File> musicas = new ArrayList<File>();
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("src/template/musicas.txt"));
+			String line = reader.readLine();
+			
+			while (line != null) {
+				musicas.add(new File(line));
+				line = reader.readLine();
+			}
+			
+			reader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		mediaPlayer.pause();
+		listMusicas.getSelectionModel().selectPrevious();
+		String musicaselecao = listMusicas.getSelectionModel().getSelectedItem();
+		for(File m : musicas) {
+			boolean iguais = musicaselecao.equals(m.getName());
+			if(iguais == true) {
+				media = new Media(m.toURI().toString());
+				mediaPlayer = new MediaPlayer(media);
+				mediaPlayer.play();
+				beginTimer();
+				break;
+			}
+		}
+	}
+	
+	public void beginTimer() {
+		timer = new Timer();
 		
+		task = new TimerTask() {
+			public void run() {
+				running = true;
+				double current = mediaPlayer.getCurrentTime().toSeconds();
+				double end = media.getDuration().toSeconds();
+				progressBar.setProgress(current/end);
+				
+				if(current/end == 1) {
+					endTimer();
+				}
+			}
+		};
+		
+		timer.schedule(task, 500, 1000);
+		
+	}
+	
+	public void endTimer() {
+		running = false;
+		timer.cancel();
 	}
 	
 	@FXML
 	public void nextMusica(ActionEvent event) {
-		
+		if(running) {
+			endTimer();
+		}
+		ArrayList<File> musicas = new ArrayList<File>();
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("src/template/musicas.txt"));
+			String line = reader.readLine();
+			
+			while (line != null) {
+				musicas.add(new File(line));
+				line = reader.readLine();
+			}
+			
+			reader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		mediaPlayer.pause();
+		listMusicas.getSelectionModel().selectNext();;
+		String musicaselecao = listMusicas.getSelectionModel().getSelectedItem();
+		for(File m : musicas) {
+			boolean iguais = musicaselecao.equals(m.getName());
+			if(iguais == true) {
+				media = new Media(m.toURI().toString());
+				mediaPlayer = new MediaPlayer(media);
+				mediaPlayer.play();
+				beginTimer();
+				break;
+			}
+		}
 	}
 	
 	@FXML
