@@ -36,10 +36,12 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
+import model.IUser;
 import model.Musica;
 import model.Player;
 import model.Playlist;
 import model.User;
+import model.VIPUser;
 
 public class PlayerSceneController implements Initializable{
 	
@@ -69,6 +71,8 @@ public class PlayerSceneController implements Initializable{
 	private Button selectDirectoryButton;
 	@FXML
 	private Button selectFileButton;
+	@FXML
+	private Button addPlayistButton;
 	@FXML
 	private Button exitButton;
 	@FXML
@@ -106,7 +110,14 @@ public class PlayerSceneController implements Initializable{
 	
 	public void DefinirPerfil()
 	{
-		Username.setText(obterUsuarioLogado().getLogin());
+		IUser usuarioLogado = obterUsuarioLogado();
+		Username.setText(usuarioLogado.getLogin());
+		if (!(usuarioLogado instanceof VIPUser)) {
+			addPlayistButton.setDisable(true);
+			listPlaylistAtual.setDisable(true);
+			listPlaylists.setDisable(true);
+			playlistAtualLabel.setText("Experimente o VIP");
+		}
 	}
 	
 	@FXML
@@ -341,11 +352,11 @@ public class PlayerSceneController implements Initializable{
         return player.getDiretorios();
     }
 	
-	public void definirUsuarioLogado(User usuario) {
+	public void definirUsuarioLogado(IUser usuario) {
         player.setUsuariologado(usuario);
     }
 	
-	public User obterUsuarioLogado() {
+	public IUser obterUsuarioLogado() {
         return player.getUsuariologado();
     }
 

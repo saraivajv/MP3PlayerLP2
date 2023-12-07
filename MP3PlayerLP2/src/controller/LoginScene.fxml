@@ -16,6 +16,7 @@
       <Button layoutX="192.0" layoutY="158.0" mnemonicParsing="false" onAction="#logar" prefHeight="25.0" prefWidth="212.0" text="entrar" />
       <TextField fx:id="cadastroUserName" layoutX="255.0" layoutY="231.0" />
       <PasswordField fx:id="cadastroSenha" layoutX="255.0" layoutY="262.0" />
+      <CheckBox fx:id="vipUserCheckbox" layoutX="278.0" layoutY="293.0" mnemonicParsing="false" text="VIP" />
       <Button layoutX="194.0" layoutY="316.0" mnemonicParsing="false" onAction="#cadastrar" prefHeight="25.0" prefWidth="212.0" text="cadastrar" />
       <Button fx:id="exitButton" layoutX="194.0" layoutY="358.0" mnemonicParsing="false" onAction="#fecharAplicação" prefHeight="25.0" prefWidth="212.0" text="sair da aplicação" />
       <Label layoutX="192.0" layoutY="95.0" text="nome: ">
@@ -56,6 +57,5 @@
       <Line endX="100.0" layoutX="337.0" layoutY="50.0" startX="-175.0" stroke="#00000080" />
       <Line endX="100.0" layoutX="303.0" layoutY="191.0" startX="-111.0" stroke="#00000080" />
       <Line endX="100.0" layoutX="305.0" layoutY="349.0" startX="-111.0" stroke="#00000080" />
-      <CheckBox layoutX="278.0" layoutY="293.0" mnemonicParsing="false" text="VIP" />
    </children>
 </AnchorPane>

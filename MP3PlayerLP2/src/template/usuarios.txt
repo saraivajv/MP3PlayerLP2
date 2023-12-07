@@ -1,2 +1,0 @@
-joao:senha
-joao2:senha2

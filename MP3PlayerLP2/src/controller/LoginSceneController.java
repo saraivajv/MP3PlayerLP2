@@ -18,10 +18,13 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import model.IUser;
 import model.User;
+import model.VIPUser;
 
 public class LoginSceneController implements Initializable{
 	
@@ -30,13 +33,15 @@ public class LoginSceneController implements Initializable{
 	private Parent root;
 	
 	@FXML
+	private CheckBox vipUserCheckbox;
+	@FXML
 	private Button exitButton;
 	@FXML
 	private TextField loginUserName;
 	@FXML
-	private PasswordField loginSenha;
-	@FXML
 	private TextField cadastroUserName;
+	@FXML
+	private PasswordField loginSenha;
 	@FXML
 	private PasswordField cadastroSenha;
 	
@@ -46,8 +51,8 @@ public class LoginSceneController implements Initializable{
 	@FXML
 	public void logar(ActionEvent event) {
 		try{
-			User usuario = obterUsuariologado();
-			if (AutenticarUsuario(usuario)) {
+			IUser usuario = AutenticarUsuario(loginUserName.getText(), loginSenha.getText());//obterUsuariologado();
+			if (usuario != null) {
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("PlayerScene.fxml"));
 				root = loader.load();
 				
@@ -71,40 +76,60 @@ public class LoginSceneController implements Initializable{
 	public void cadastrar(ActionEvent event) throws FileNotFoundException {
 		String nomeusuario = cadastroUserName.getText();
 		String senhausuario = cadastroSenha.getText();
+		String usuarioVip = "0";
+		
+		if (vipUserCheckbox.isSelected()) {
+			usuarioVip = "1";
+		}
 		
 		try {
 			PrintWriter ps;
 			ps = new PrintWriter(new FileWriter("src/template/usuarios.txt", true));
-			ps.println(nomeusuario + ":" + senhausuario);
+			ps.println(usuarioVip + ":" + nomeusuario + ":" + senhausuario);
 	        ps.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public Boolean AutenticarUsuario(User usuario) {
+	public IUser AutenticarUsuario(String login, String senha) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader("src/template/usuarios.txt"));
 			String line = reader.readLine();
 			
 			while (line != null) {
-				String data[] = line.split(":", 2);
+				String data[] = line.split(":", 3);
+				System.out.println(data[0] + " " + data[1] + " " + data[2] + " ");
 				
-				if (usuario.getLogin().equals(data[0]) && usuario.getSenha().equals(data[1])) {
+				if (login.equals(data[1]) && senha.equals(data[2])) {
 					reader.close();
-					return true;
+					
+					IUser usuario;
+					
+					if (data[0].equals("1")) {
+						usuario = new VIPUser();
+						System.out.println("checou que é vip");
+					} else {
+						usuario = new User();
+					}
+					
+					System.out.println(usuario instanceof User);
+					usuario.setLogin(login);
+					usuario.setSenha(senha);
+					
+					return usuario;
 				}
 				
 				line = reader.readLine();
 			}
 			
 			reader.close();
-			return false;
 			
 		} catch (IOException e) {
 			e.printStackTrace();
-			return false;
 		}
+		
+		return null;
 	}
 	
 	@FXML

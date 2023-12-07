@@ -7,12 +7,12 @@ public class Player {
 	private List<Musica> musicas;
 	private List<String> diretorios;
 	private List<User> usuarios;
-	private User usuariologado;
+	private IUser usuariologado;
 	
-	public User getUsuariologado() {
+	public IUser getUsuariologado() {
 		return usuariologado;
 	}
-	public void setUsuariologado(User usuariologado) {
+	public void setUsuariologado(IUser usuariologado) {
 		this.usuariologado = usuariologado;
 	}
 	
