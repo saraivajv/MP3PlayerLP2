@@ -9,8 +9,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -66,15 +68,32 @@ public class PlayerSceneController implements Initializable{
 	@FXML
 	private Button exitButton;
 	@FXML
-	private ListView<?> listMusicas;
+	private ListView<String> listMusicas;
 	@FXML
-	private ListView<?> listPlaylistAtual;
+	private ListView<String> listPlaylistAtual;
 	@FXML
-	private ListView<?> listPlaylists;
+	private ListView<String> listPlaylists;
 	
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("src/template/diretorios.txt"));
+			String line = reader.readLine();
+			
+			while (line != null) {
+				File dir = new File(line);
+				
+				//Falta completar -----------------------
+				
+				
+				line = reader.readLine();
+			}
+			
+			reader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void DefinirPerfil()
@@ -109,15 +128,48 @@ public class PlayerSceneController implements Initializable{
 		FileChooser.ExtensionFilter fileExtensions = 
 		new FileChooser.ExtensionFilter("Sound files", "*.mp3", "*.wav", "*.ogg");
 		file_chooser.getExtensionFilters().add(fileExtensions);
+		File mselecionada = file_chooser.showOpenDialog(null);
+		listMusicas.getItems().add(mselecionada.getName());
 		
-		file_chooser.showOpenDialog(null);
+		PrintWriter ps;
+		try {
+			ps = new PrintWriter(new FileWriter("src/template/musicas.txt", true));
+			ps.println(mselecionada.getAbsolutePath());
+			ps.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 	@FXML
 	public void selectDiretorio(ActionEvent event) {
+		
+		File diretorioadicionado;
 		DirectoryChooser directory_chooser = new DirectoryChooser();
 		directory_chooser.setTitle("Selecione o diretorio a ser adicionado");
-		directory_chooser.showDialog(null);
+		diretorioadicionado = directory_chooser.showDialog(stage);		
+		PrintWriter ps;
+		try {
+			ps = new PrintWriter(new FileWriter("src/template/diretorios.txt", true));
+			ps.println(diretorioadicionado.getAbsolutePath());
+			ps.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			
+		File listamusicas[] = diretorioadicionado.listFiles();
+		for (File m : listamusicas) {
+			listMusicas.getItems().add(m.getName());
+			try {
+				ps = new PrintWriter(new FileWriter("src/template/musicas.txt", true));
+				ps.println(m.getAbsolutePath());
+				ps.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 	
 	@FXML
