@@ -23,6 +23,7 @@ import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 
 import javafx.scene.control.Label;
@@ -76,11 +77,18 @@ public class PlayerSceneController implements Initializable{
 	@FXML
 	private Button exitButton;
 	@FXML
+	private Button changelistButton;
+	@FXML
 	private ListView<String> listMusicas;
 	@FXML
 	private ListView<String> listPlaylistAtual;
 	@FXML
 	private ListView<String> listPlaylists;
+	@FXML
+	private TextField addPlaylistName;
+	
+	private ListView<String> listAtual;
+	private String AtualFile = "src/template/musicas.txt";
 	
 	private Media media;
 	private MediaPlayer mediaPlayer;
@@ -105,27 +113,29 @@ public class PlayerSceneController implements Initializable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
+		listAtual = listMusicas;
+		
 	}
 	
 	public void DefinirPerfil()
 	{
 		IUser usuarioLogado = obterUsuarioLogado();
 		Username.setText(usuarioLogado.getLogin());
+		listPlaylistAtual.setDisable(true);
 		if (!(usuarioLogado instanceof VIPUser)) {
 			addPlayistButton.setDisable(true);
-			listPlaylistAtual.setDisable(true);
 			listPlaylists.setDisable(true);
 			playlistAtualLabel.setText("Experimente o VIP");
+			changelistButton.setDisable(true);
 		}
 	}
 	
 	@FXML
 	public void tocarMusica(ActionEvent event) {
-		beginTimer();
 		ArrayList<File> musicas = new ArrayList<File>();
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader("src/template/musicas.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader(AtualFile));
 			String line = reader.readLine();
 			
 			while (line != null) {
@@ -139,12 +149,14 @@ public class PlayerSceneController implements Initializable{
 			e.printStackTrace();
 		}
 		
-		if(listMusicas.getSelectionModel().isEmpty() != true) {
-			String musicaselecao = listMusicas.getSelectionModel().getSelectedItem();
+		
+		if(listAtual.getSelectionModel().isEmpty() != true) {
+			String musicaselecao = listAtual.getSelectionModel().getSelectedItem();
 			for(File m : musicas) {
 				boolean iguais = musicaselecao.equals(m.getName());
 				if(iguais == true) {
 					media = new Media(m.toURI().toString());
+					beginTimer();
 					mediaPlayer = new MediaPlayer(media);
 					mediaPlayer.play();
 					break;
@@ -166,7 +178,7 @@ public class PlayerSceneController implements Initializable{
 		}
 		ArrayList<File> musicas = new ArrayList<File>();
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader("src/template/musicas.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader(AtualFile));
 			String line = reader.readLine();
 			
 			while (line != null) {
@@ -180,8 +192,8 @@ public class PlayerSceneController implements Initializable{
 			e.printStackTrace();
 		}
 		mediaPlayer.pause();
-		listMusicas.getSelectionModel().selectPrevious();
-		String musicaselecao = listMusicas.getSelectionModel().getSelectedItem();
+		listAtual.getSelectionModel().selectPrevious();
+		String musicaselecao = listAtual.getSelectionModel().getSelectedItem();
 		for(File m : musicas) {
 			boolean iguais = musicaselecao.equals(m.getName());
 			if(iguais == true) {
@@ -226,7 +238,7 @@ public class PlayerSceneController implements Initializable{
 		}
 		ArrayList<File> musicas = new ArrayList<File>();
 		try {
-			BufferedReader reader = new BufferedReader(new FileReader("src/template/musicas.txt"));
+			BufferedReader reader = new BufferedReader(new FileReader(AtualFile));
 			String line = reader.readLine();
 			
 			while (line != null) {
@@ -240,8 +252,8 @@ public class PlayerSceneController implements Initializable{
 			e.printStackTrace();
 		}
 		mediaPlayer.pause();
-		listMusicas.getSelectionModel().selectNext();;
-		String musicaselecao = listMusicas.getSelectionModel().getSelectedItem();
+		listAtual.getSelectionModel().selectNext();;
+		String musicaselecao = listAtual.getSelectionModel().getSelectedItem();
 		for(File m : musicas) {
 			boolean iguais = musicaselecao.equals(m.getName());
 			if(iguais == true) {
@@ -254,26 +266,81 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	public void atualizarPlaylist() {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("src/template/playlist_" + listPlaylists.getSelectionModel().getSelectedItem() + ".txt"));
+			String line = reader.readLine();
+			reader.readLine();
+			reader.readLine();
+			listPlaylistAtual.getItems().clear();
+			
+			while (line != null) {
+				File file = new File(line);
+				listPlaylistAtual.getItems().add(file.getName());
+				line = reader.readLine();
+			}
+			System.out.println("atualizado");
+			reader.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@FXML
+	public void TrocarList(ActionEvent event) {
+		if (mediaPlayer != null) {
+			endTimer();
+			mediaPlayer.pause();	
+		}
+		
+		if (AtualFile.equals("src/template/musicas.txt")) {
+			listAtual = listPlaylistAtual;
+			AtualFile = "src/template/playlist_" + listPlaylists.getSelectionModel().getSelectedItem() + ".txt";
+			changelistButton.setText("Musica");
+			
+			listPlaylistAtual.setDisable(false);
+			listMusicas.setDisable(true);
+			
+			System.out.println("Teste Musica");
+		} else {
+			listAtual = listMusicas;
+			AtualFile = "src/template/musicas.txt";
+			changelistButton.setText("Playlist");
+			listPlaylistAtual.setDisable(true);
+			listMusicas.setDisable(false);
+			
+			System.out.println("Teste Playlist");
+		}
+	}
+	
 	@FXML
 	public void selectArquivo(ActionEvent event) {
 		FileChooser file_chooser = new FileChooser();
 		file_chooser.setTitle("Selecione o arquivo a ser adicionado");
 		
 		FileChooser.ExtensionFilter fileExtensions = 
-		new FileChooser.ExtensionFilter("Sound files", "*.mp3", "*.wav", "*.ogg");
+		new FileChooser.ExtensionFilter("Sound and playlist files", "*.mp3", "*.wav", "*.ogg", "*.txt");
 		file_chooser.getExtensionFilters().add(fileExtensions);
 		File mselecionada = file_chooser.showOpenDialog(null);
-		listMusicas.getItems().add(mselecionada.getName());
 		
 		PrintWriter ps;
-		try {
-			ps = new PrintWriter(new FileWriter("src/template/musicas.txt", true));
-			ps.println(mselecionada.getAbsolutePath());
-			ps.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		if (getFileExtension(mselecionada).equals(".txt") && mselecionada.getName().contains("playlist_")) {
+			listPlaylists.getItems().add(mselecionada.getName());
 		}
-		
+		else if (!getFileExtension(mselecionada).equals(".txt")){
+			listMusicas.getItems().add(mselecionada.getName());
+			try {
+				ps = new PrintWriter(new FileWriter("src/template/musicas.txt", true));
+				ps.println(mselecionada.getAbsolutePath());
+				ps.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			System.out.println("Arquivo não suportado");
+		}
 	}
 	
 	@FXML
@@ -311,6 +378,25 @@ public class PlayerSceneController implements Initializable{
 	}
 	
 	@FXML
+	public void adicionarMusicaPlaylist(ActionEvent event) {
+		FileChooser file_chooser = new FileChooser();
+		file_chooser.setTitle("Selecione o arquivo a ser adicionado");
+		
+		FileChooser.ExtensionFilter fileExtensions = 
+		new FileChooser.ExtensionFilter("Sound files", "*.mp3", "*.wav", "*.ogg");
+		file_chooser.getExtensionFilters().add(fileExtensions);
+		File mselecionada = file_chooser.showOpenDialog(null);
+		listPlaylistAtual.getItems().add(mselecionada.getName());
+		try {
+			PrintWriter ps = new PrintWriter(new FileWriter("src/template/playlist_" + listPlaylists.getSelectionModel().getSelectedItem() + ".txt", true));
+			ps.println(mselecionada.getAbsolutePath());
+			ps.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@FXML
 	public void deslogar(ActionEvent event) {
 		try{
 			root = FXMLLoader.load(getClass().getResource("LoginScene.fxml"));
@@ -323,18 +409,29 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	@FXML
+	public void adicionarPlaylist() {
+		String playlistName = addPlaylistName.getText();
+		listPlaylists.getItems().add(playlistName);
+		
+		try {
+			PrintWriter ps = new PrintWriter(new FileWriter("src/template/playlist_" + playlistName + ".txt", true));
+			ps.println(obterUsuarioLogado().getLogin() + ":" + obterUsuarioLogado().getSenha());
+			ps.println();
+			ps.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public PlayerSceneController() {
 		this.player = new Player();
 	}
-	
 	
 	public void adicionarMusica(Musica musica) {
         player.addMusica(musica);
     }
 	
-	public void adicionarPlaylist(Playlist playlist) {
-        player.addPlaylist(playlist);
-    }
 	
 	public void adicionarDiretorio(String diretorio) {
         player.addDiretorio(diretorio);
@@ -359,6 +456,14 @@ public class PlayerSceneController implements Initializable{
 	public IUser obterUsuarioLogado() {
         return player.getUsuariologado();
     }
-
+	
+	private String getFileExtension(File file) {
+	    String name = file.getName();
+	    int lastIndexOf = name.lastIndexOf(".");
+	    if (lastIndexOf == -1) {
+	        return ""; // empty extension
+	    }
+	    return name.substring(lastIndexOf);
+	}
 	
 }
