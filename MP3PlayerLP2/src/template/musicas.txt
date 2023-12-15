@@ -1,0 +1,3 @@
+C:\Users\ghfbe\Documents\VScode\LP2\MP3PlayerLP2\MP3PlayerLP2\src\template\musiquinhas\Colony - TrackTribe.mp3
+C:\Users\ghfbe\Documents\VScode\LP2\MP3PlayerLP2\MP3PlayerLP2\src\template\musiquinhas\Limousines - TrackTribe.mp3
+C:\Users\ghfbe\Documents\VScode\LP2\MP3PlayerLP2\MP3PlayerLP2\src\template\musiquinhas\No Indication - TrackTribe.mp3

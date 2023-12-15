@@ -10,40 +10,33 @@ import javafx.scene.control.Button;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import model.IUser;
-import model.Musica;
 import model.Player;
-import model.Playlist;
-import model.User;
 import model.VIPUser;
-
+/**
+ * Classe responsavel por controlar a cena do player
+ */
 public class PlayerSceneController implements Initializable{
 	
 	private Stage stage;
@@ -96,6 +89,16 @@ public class PlayerSceneController implements Initializable{
 	private TimerTask task;
 	private boolean running;
 	
+	/**
+	 * construtor
+	 */
+	public PlayerSceneController() {
+		this.player = new Player();
+	}
+	
+	/**
+	 * Inicia o player
+	 */
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
 		try {
@@ -115,9 +118,11 @@ public class PlayerSceneController implements Initializable{
 		}
 		
 		listAtual = listMusicas;
-		
 	}
 	
+	/**
+	 * Exibe o usuario logado, e desabilita funções caso o mesmo não seja vip
+	 */
 	public void DefinirPerfil()
 	{
 		IUser usuarioLogado = obterUsuarioLogado();
@@ -131,6 +136,10 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	/**
+	 * Reproduz a musica selecionada
+	 * @param event evento
+	 */
 	@FXML
 	public void tocarMusica(ActionEvent event) {
 		ArrayList<File> musicas = new ArrayList<File>();
@@ -165,12 +174,20 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	/**
+	 * pausa a musica reproduzida
+	 * @param event evento
+	 */
 	@FXML
 	public void pausarMusica(ActionEvent event) {
 		endTimer();
 		mediaPlayer.pause();
 	}
 	
+	/**
+	 * Troca a musica selecionada e reproduzida para a anterior
+	 * @param event evento
+	 */
 	@FXML
 	public void prevMusica(ActionEvent event) {
 		if(running) {
@@ -206,6 +223,9 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	/**
+	 * inicia o timer da musica reproduzida;
+	 */
 	public void beginTimer() {
 		timer = new Timer();
 		
@@ -226,11 +246,19 @@ public class PlayerSceneController implements Initializable{
 		
 	}
 	
+	/**
+	 * Finaliza o timer da musica reproduzida
+	 */
 	public void endTimer() {
 		running = false;
 		timer.cancel();
 	}
 	
+	
+	/**
+	 * Troca a musica selecionada e reproduzida para a proxima
+	 * @param event evento
+	 */
 	@FXML
 	public void nextMusica(ActionEvent event) {
 		if(running) {
@@ -266,6 +294,9 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	/**
+	 * Atualiza a lista de musicas na playlist
+	 */
 	public void atualizarPlaylist() {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader("src/template/playlist_" + listPlaylists.getSelectionModel().getSelectedItem() + ".txt"));
@@ -287,6 +318,10 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	/**
+	 * Altera entre escutar a musica da playlist ou escutar musica da tabela de musicas
+	 * @param event evento
+	 */
 	@FXML
 	public void TrocarList(ActionEvent event) {
 		if (mediaPlayer != null) {
@@ -314,6 +349,10 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	/**
+	 * Abre uma aba para o usuario selecionar uma musica ou playlist e a adiciona a lista de musica ou playlist
+	 * @param event evento
+	 */
 	@FXML
 	public void selectArquivo(ActionEvent event) {
 		FileChooser file_chooser = new FileChooser();
@@ -343,6 +382,10 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	/**
+	 * Abre uma aba para o usuario selecionar uma pasta e adiciona seu conteudo a aplicação
+	 * @param event evento
+	 */
 	@FXML
 	public void selectDiretorio(ActionEvent event) {
 		
@@ -377,6 +420,10 @@ public class PlayerSceneController implements Initializable{
 		
 	}
 	
+	/**
+	 * Abre uma aba para o usuario selecionar uma musica e a adiciona na playlist atual
+	 * @param event evento
+	 */
 	@FXML
 	public void adicionarMusicaPlaylist(ActionEvent event) {
 		FileChooser file_chooser = new FileChooser();
@@ -396,6 +443,10 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	/**
+	 * retoma para a tela de login
+	 * @param event evento
+	 */
 	@FXML
 	public void deslogar(ActionEvent event) {
 		try{
@@ -409,6 +460,9 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
+	/**
+	 * adiciona uma nova playlist
+	 */
 	@FXML
 	public void adicionarPlaylist() {
 		String playlistName = addPlaylistName.getText();
@@ -424,39 +478,28 @@ public class PlayerSceneController implements Initializable{
 		}
 	}
 	
-	public PlayerSceneController() {
-		this.player = new Player();
-	}
 	
-	public void adicionarMusica(Musica musica) {
-        player.addMusica(musica);
-    }
-	
-	
-	public void adicionarDiretorio(String diretorio) {
-        player.addDiretorio(diretorio);
-    }
-	
-	public List<Playlist> obterPlaylists() {
-        return player.getPlaylists();
-    }
-	
-	public List<Musica> obterMusicas() {
-        return player.getMusicas();
-    }
-	
-	public List<String> obterDiretorios() {
-        return player.getDiretorios();
-    }
-	
-	public void definirUsuarioLogado(IUser usuario) {
-        player.setUsuariologado(usuario);
-    }
-	
+	/**
+	 * Retorna o usuario logado
+	 * @return o usuario logado
+	 */
 	public IUser obterUsuarioLogado() {
         return player.getUsuariologado();
     }
 	
+	/**
+	 * define o usuario logado
+	 * @param usuario usuario logado
+	 */
+	public void definirUsuarioLogado(IUser usuario) {
+		player.setUsuariologado(usuario);
+	}
+	
+	/** 
+	 * indentifica a extensão de um arquivo
+	 * @param file Arquivo
+	 * @return String contendo a extensão
+	 */
 	private String getFileExtension(File file) {
 	    String name = file.getName();
 	    int lastIndexOf = name.lastIndexOf(".");
@@ -465,5 +508,6 @@ public class PlayerSceneController implements Initializable{
 	    }
 	    return name.substring(lastIndexOf);
 	}
+
 	
 }

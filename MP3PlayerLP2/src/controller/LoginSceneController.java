@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Scanner;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,6 +25,9 @@ import model.IUser;
 import model.User;
 import model.VIPUser;
 
+/**
+ * Classe responsavel por controlar a cena de login
+ */
 public class LoginSceneController implements Initializable{
 	
 	private Stage stage;
@@ -45,13 +47,22 @@ public class LoginSceneController implements Initializable{
 	@FXML
 	private PasswordField cadastroSenha;
 	
+	/**
+	 * Construtor
+	 */
+	public LoginSceneController() {}
+	
 	public void initialize(URL arg0, ResourceBundle arg1) {
 	}
 	
+	/**
+	 * Checa se o usuario inserido existe e troca a cena para o player caso exista.
+	 * @param event evento
+	 */
 	@FXML
 	public void logar(ActionEvent event) {
 		try{
-			IUser usuario = AutenticarUsuario(loginUserName.getText(), loginSenha.getText());//obterUsuariologado();
+			IUser usuario = AutenticarUsuario(loginUserName.getText(), loginSenha.getText());
 			if (usuario != null) {
 				FXMLLoader loader = new FXMLLoader(getClass().getResource("PlayerScene.fxml"));
 				root = loader.load();
@@ -71,7 +82,11 @@ public class LoginSceneController implements Initializable{
 			System.out.println("Deu errado");
 		}
 	}
-	
+	/**
+	 * Cadastra o usuario dentro do arquivo usuarios.txt
+	 * @param event evento
+	 * @throws FileNotFoundException Caso tenha falhado em escrever no arquivo
+	 */
 	@FXML
 	public void cadastrar(ActionEvent event) throws FileNotFoundException {
 		String nomeusuario = cadastroUserName.getText();
@@ -91,7 +106,12 @@ public class LoginSceneController implements Initializable{
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Indentifica se um usuario foi cadastrado
+	 * @param login login do usuario a ser checado
+	 * @param senha senha do usuario a ser checado
+	 * @return O usuario cadastrado, ou null caso este não tenha sido cadastrado
+	 */
 	public IUser AutenticarUsuario(String login, String senha) {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader("src/template/usuarios.txt"));
@@ -132,15 +152,12 @@ public class LoginSceneController implements Initializable{
 		return null;
 	}
 	
+	/**
+	 * Fecha a aplicação
+	 * @param event evento
+	 */
 	@FXML
 	public void fecharAplicação(ActionEvent event) {
 		System.exit(0);
-	}
-	
-	public User obterUsuariologado() {
-		User usuario = new User();
-		usuario.setLogin(loginUserName.getText());
-		usuario.setSenha(loginSenha.getText());
-		return usuario;
 	}
 }

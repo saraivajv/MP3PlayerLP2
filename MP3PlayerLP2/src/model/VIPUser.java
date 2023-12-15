@@ -1,15 +1,12 @@
 package model;
-import java.util.*;
 
+/**
+ * Classe do usuario vip
+ */
 public class VIPUser extends User {
 
-	private List<Playlist> playlists;
-	
-	public void addPlaylist(Playlist p) {
-		this.playlists.add(p);
-	}
-	
-	public List<Playlist> getPlaylists(){
-		return this.playlists;
-	}
+	/**
+	 * Construtor
+	 */
+	public VIPUser() {}
 }

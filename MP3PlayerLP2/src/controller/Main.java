@@ -5,10 +5,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 
-
+/**
+ * Classe main
+ */
 public class Main extends Application {
+	
+	/**
+	 * Inicia a cena do login
+	 */
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -21,7 +26,10 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * inicia a aplicação
+	 * @param args array de argumentos
+	 */
 	public static void main(String[] args) {
 		launch(args);
 	}

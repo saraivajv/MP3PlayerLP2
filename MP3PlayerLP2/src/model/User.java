@@ -1,9 +1,17 @@
 package model;
 
+/**
+ * Classe do usuario
+ */
 public class User implements IUser{
 
 	private String login;
 	private String senha;
+	
+	/**
+	 * Construtor
+	 */
+	public User(){}
 	
 	public String getLogin() {
 		return login;
